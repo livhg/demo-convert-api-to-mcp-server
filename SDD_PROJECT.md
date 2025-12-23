@@ -28,14 +28,14 @@
 **Spec First, AI Implements**
 
 ```
-人類（你） 設計規格
+人類（你）設計規格 + 技術決策
  → AI 生成程式碼
  → 測試 → 調整規格 → 再次實作
  → 完成
 ```
 
-- **你的角色**：規格設計師 - 定義「要做什麼」
-- **AI 的角色**：程式實作者
+- **你的角色**：規格設計師 - 定義「要做什麼」和「怎麼做」
+- **AI 的角色**：程式實作者 - 根據規格執行
 - **OpenSpec**：管理規格版本、變更追蹤、自動合併
 
 ---
@@ -45,7 +45,7 @@
 ### 必要軟體
 
 - **Node.js** (v16+) - 用於安裝 OpenSpec
-- **Python** (v3.8+) - 用於執行 REST API 和 MCP Server
+- **Python** (v3.11+) - 用於執行 REST API 和 MCP Server
 - **AI Agent** - VS Code、Cursor 或其他
 
 ### 必要套件
@@ -106,7 +106,7 @@ openspec init
 執行 `openspec init` 後，CLI 會進行互動式詢問：
 
 ```
-? Which AI tools do you use? (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? Which AI tools do you use?
 ❯◯ Claude Code
  ◯ CodeBuddy
  ◯ Cursor
@@ -126,7 +126,7 @@ OpenSpec 會：
 
 ### ⭐ Step 4: 初始化專案資訊
 
-初始化完成後，OpenSpec 會顯示一段提示文字（**紅框處**）：
+初始化完成後，OpenSpec 會顯示一段提示文字：
 
 ```
 Populate your project context:
@@ -153,10 +153,9 @@ Populate your project context:
 demo-convert-api-to-mcp-server/
 ├── openspec/
 │   ├── specs/           # 目前的正式規格文件
-│   ├── changes/         # 進行中的變更
-│   └── project.md       # 專案整體資訊（剛才 AI 幫你填寫的）
+│   └── changes/         # 進行中的變更
 ├── AGENTS.md            # AI 工具的交接指南
-└── project.md           # 專案說明
+└── project.md           # 專案整體資訊（剛才 AI 幫你填寫的）
 ```
 
 **重要概念**：
@@ -182,20 +181,7 @@ python app.py
 INFO:     Uvicorn running on http://0.0.0.0:8012
 ```
 
-### 🌐 Step 6: 瀏覽 Swagger UI
-
-打開瀏覽器，前往：
-
-**http://localhost:8012/docs**
-
-你會看到書店 API 的完整文件，包含：
-
-- 📖 **書籍 (Books)** - 6 個端點
-- 📦 **庫存 (Inventory)** - 2 個端點
-- 👤 **作者 (Authors)** - 2 個端點
-- 📂 **分類 (Categories)** - 2 個端點
-
-### 📥 Step 7: 提取 OpenAPI 規範
+### 📥 Step 6: 提取 OpenAPI 規範
 
 我們需要 OpenAPI 規範讓 AI 能夠參考真實的 REST API 定義，確保生成的 MCP tool 與 API 完全一致。
 
@@ -206,19 +192,19 @@ INFO:     Uvicorn running on http://0.0.0.0:8012
 - 處理錯誤情況
 - 確保 MCP tool 規格的準確性
 
-**方法 1：從瀏覽器下載**
-
-1. 前往 **http://localhost:8012/openapi.json**
-2. 右鍵 → 「另存新檔」
-3. 儲存為 `bookstore-openapi.json`
-
-**方法 2：使用 curl 下載**
+**方法 1：使用 curl 下載**
 
 ```bash
 curl http://localhost:8012/openapi.json > bookstore-openapi.json
 ```
 
-### 📊 Step 8: 分析 4 個選定的端點
+**方法 2：從瀏覽器下載**
+
+1. 前往 **http://localhost:8012/openapi.json**
+2. 右鍵 → 「另存新檔」
+3. 儲存為 `bookstore-openapi.json`
+
+### 📊 Step 7: 分析 4 個選定的端點
 
 我們將專注於以下 4 個端點，它們涵蓋不同的複雜度：
 
@@ -421,13 +407,16 @@ curl http://localhost:8012/openapi.json > bookstore-openapi.json
 ```
 請參考 bookstore-openapi.json 中的 GET /books/search 端點，
 創建一個 OpenSpec change proposal for adding search_books MCP tool。
-確保 MCP tool 的參數與 REST API 完全一致。
+
+要求：
+1. 確保 MCP tool 的參數與 REST API 完全一致
+2. 將 MCP tool 建立在 sdd_mcp.py (若檔案不存在則建立該檔，並完成 MCP Server 架構)
 ```
 
 AI 會建立以下結構：
 
 ```
-openspec/changes/add-search-books-tool/
+openspec/changes/add-search-books-mcp-tool/
 ├── proposal.md          # 變更說明
 ├── tasks.md            # 實作任務清單
 └── specs/
@@ -448,34 +437,32 @@ openspec list
 查看詳細內容：
 
 ```bash
-openspec show add-search-books-tool
+openspec show add-search-books-mcp-tool
 ```
 
-### 📋 Step 3: 撰寫詳細的 Tool 規格
+### 📋 Step 3: Review 與確認 Spec
 
-這是最關鍵的步驟！請 AI 參考 OpenAPI 撰寫完整的 spec：
+這是最關鍵的步驟！
 
-```
-請參考 bookstore-openapi.json 中的 GET /books/search 端點，
-在 openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md 中撰寫完整的規格，確保：
-1. 所有參數與 REST API 一致
-2. 包含所有使用場景的 Scenarios
-3. 定義友善的格式化輸出（使用 emoji）
-4. 處理空結果的情況
-```
+請手動檢查並編輯 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`，確保：
 
-或者您也可以手動編輯 `openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md`：
+1. **參數正確性**：所有參數與 `bookstore-openapi.json` 中的 `GET /books/search` 端點一致
+2. **場景完整性**：包含所有使用場景的 Scenarios（搜尋書名、作者、ISBN 等）
+3. **輸出格式**：定義友善的格式化輸出（可使用 emoji 增強可讀性）
+4. **邊界情況**：處理空結果、錯誤情況等
+
+> 💡 Spec 是實作的藍圖，需要人類的領域知識和判斷來確保其正確性和完整性。AI 可以協助生成初稿，但最終確認必須由人類負責。
 
 ### ✅ Step 4: 驗證規格格式
 
 ```bash
-openspec validate add-search-books-tool
+openspec validate add-search-books-mcp-tool
 ```
 
 如果格式正確，會顯示：
 
 ```
-Change 'add-search-books-tool' is valid
+Change 'add-search-books-mcp-tool' is valid
 ```
 
 ### 🤖 Step 5: 用 AI 實作程式碼
@@ -484,15 +471,14 @@ Change 'add-search-books-tool' is valid
 
 **請 AI 實作**：
 
-User：
-
 ```
-Please implement the search_books tool according to the OpenSpec specification in openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md. Create a new file sdd_mcp.py with the FastMCP server implementation.
+Please implement the search_books tool according to the OpenSpec change proposal:
+openspec/changes/add-search-books-mcp-tool/
 ```
 
 **AI 會做什麼**：
 
-1. 讀取 `openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md`
+1. 讀取 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`
 2. 理解所有 Requirements 和 Scenarios
 3. 生成符合規格的 Python 程式碼
 4. 在 `tasks.md` 中標記完成的任務
@@ -531,17 +517,17 @@ search_books(min_price=300, max_price=500)
 
 如果測試中發現問題，使用 OpenSpec 工作流程修正：
 
-> 📌 **說明**：因為 change proposal 已經在 Step 1 建立了（`openspec/changes/add-search-books-tool/`），所以只需要修改其中的規格檔案並重新生成程式碼，不需要重新建立 proposal。
+> 📌 **說明**：因為 change proposal 已經在 Step 1 建立了（`openspec/changes/add-search-books-mcp-tool/`），所以只需要修改其中的規格檔案並重新生成程式碼，不需要重新建立 proposal。
 
-1. **修改規格**：在 VS Code 中編輯 `openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md`
+1. **修改規格**：在 VS Code 中編輯 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`
 2. **驗證規格**：在終端機中執行
    ```bash
-   openspec validate add-search-books-tool
+   openspec validate add-search-books-mcp-tool
    ```
 3. **重新實作**：在 Copilot Chat 中請 AI 根據更新後的規格重新實作
 
    ```
-   請根據 openspec/changes/add-search-books-tool/specs/mcp-tools/spec.md 的更新規格重新實作 search_books tool
+   請根據 openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md 的更新規格重新實作 search_books tool
    ```
 
 4. **再次測試**：重複 Step 6 的測試流程
@@ -553,18 +539,18 @@ search_books(min_price=300, max_price=500)
 測試通過後，歸檔這個 change：
 
 ```bash
-openspec archive add-search-books-tool --yes
+openspec archive add-search-books-mcp-tool --yes
 ```
 
 或請 AI 歸檔：
 
 ```
-User：Please archive the add-search-books-tool change
+User：Please archive the add-search-books-mcp-tool change
 ```
 
 **歸檔後會發生什麼**：
 
-1. `openspec/changes/add-search-books-tool/` 移至 `openspec/archive/`
+1. `openspec/changes/add-search-books-mcp-tool/` 移至 `openspec/archive/`
 2. Spec delta 自動合併到 `openspec/specs/mcp-tools/spec.md`
 3. 成為專案的正式規範文件
 
