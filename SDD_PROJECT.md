@@ -420,7 +420,7 @@ openspec/changes/add-search-books-mcp-tool/
 ├── proposal.md          # 變更說明
 ├── tasks.md            # 實作任務清單
 └── specs/
-    └── mcp-tools/
+    └── sdd-mcp-tools/
         └── spec.md     # Tool 規格 delta
 ```
 
@@ -440,16 +440,11 @@ openspec list
 openspec show add-search-books-mcp-tool
 ```
 
-### 📋 Step 3: Review 與確認 Spec
+### 📋 Step 3: 審查與確認
 
 這是最關鍵的步驟！
 
-請手動檢查並編輯 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`，確保：
-
-1. **參數正確性**：所有參數與 `bookstore-openapi.json` 中的 `GET /books/search` 端點一致
-2. **場景完整性**：包含所有使用場景的 Scenarios（搜尋書名、作者、ISBN 等）
-3. **輸出格式**：定義友善的格式化輸出（可使用 emoji 增強可讀性）
-4. **邊界情況**：處理空結果、錯誤情況等
+請檢查 AI 產生的 Proposal 與 Spec 使否正確。
 
 > 💡 Spec 是實作的藍圖，需要人類的領域知識和判斷來確保其正確性和完整性。AI 可以協助生成初稿，但最終確認必須由人類負責。
 
@@ -478,7 +473,7 @@ openspec/changes/add-search-books-mcp-tool/
 
 **AI 會做什麼**：
 
-1. 讀取 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`
+1. 讀取 `openspec/changes/add-search-books-mcp-tool/specs/sdd-mcp-tools/spec.md`
 2. 理解所有 Requirements 和 Scenarios
 3. 生成符合規格的 Python 程式碼
 4. 在 `tasks.md` 中標記完成的任務
@@ -513,13 +508,17 @@ AI 會呼叫：
 search_books(min_price=300, max_price=500)
 ```
 
+若需要 venv 內的 python：
+
+```
+python -c "import sys, json; print(json.dumps(sys.executable))"
+```
+
 #### 調整規格
 
 如果測試中發現問題，使用 OpenSpec 工作流程修正：
 
-> 📌 **說明**：因為 change proposal 已經在 Step 1 建立了（`openspec/changes/add-search-books-mcp-tool/`），所以只需要修改其中的規格檔案並重新生成程式碼，不需要重新建立 proposal。
-
-1. **修改規格**：在 VS Code 中編輯 `openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md`
+1. **修改規格**：在 VS Code 中編輯 `openspec/changes/add-search-books-mcp-tool/specs/sdd-mcp-tools/spec.md`
 2. **驗證規格**：在終端機中執行
    ```bash
    openspec validate add-search-books-mcp-tool
@@ -527,7 +526,7 @@ search_books(min_price=300, max_price=500)
 3. **重新實作**：在 Copilot Chat 中請 AI 根據更新後的規格重新實作
 
    ```
-   請根據 openspec/changes/add-search-books-mcp-tool/specs/mcp-tools/spec.md 的更新規格重新實作 search_books tool
+   請根據 openspec/changes/add-search-books-mcp-tool/specs/sdd-mcp-tools/spec.md 的更新規格重新實作 search_books tool
    ```
 
 4. **再次測試**：重複 Step 6 的測試流程
@@ -545,13 +544,13 @@ openspec archive add-search-books-mcp-tool --yes
 或請 AI 歸檔：
 
 ```
-User：Please archive the add-search-books-mcp-tool change
+Please archive the add-search-books-mcp-tool change
 ```
 
 **歸檔後會發生什麼**：
 
 1. `openspec/changes/add-search-books-mcp-tool/` 移至 `openspec/archive/`
-2. Spec delta 自動合併到 `openspec/specs/mcp-tools/spec.md`
+2. Spec delta 自動合併到 `openspec/specs/sdd-mcp-tools/spec.md`
 3. 成為專案的正式規範文件
 
 你會看到 `search_books` 的規格已經成為正式文件的一部分！
@@ -561,7 +560,7 @@ User：Please archive the add-search-books-mcp-tool change
 你已經完整走過一遍 OpenSpec 工作流程：
 
 1. ✅ 建立 change proposal
-2. ✅ 定義清晰的規格（spec delta）
+2. ✅ 定義清晰的規格
 3. ✅ 讓 AI 根據規格生成程式碼
 4. ✅ 測試並調整
 5. ✅ 歸檔 change，合併規格
@@ -572,16 +571,17 @@ User：Please archive the add-search-books-mcp-tool change
 1. openspec init           → 初始化專案（已完成）
 2. 建立 proposal           → AI 參考 OpenAPI 規範建立
 3. openspec list/show      → 檢視 changes
-4. 撰寫 spec delta         → AI 參考 OpenAPI 規範撰寫
+4. 撰寫 spec               → AI 參考 OpenAPI 規範撰寫
+4. 審查與確認               → 由你做 Spec 的確認與把關
 5. openspec validate       → 驗證格式
-6. AI 實作程式碼           → 根據 spec 生成
-7. 測試與調整             → 迭代改善規格和程式碼
+6. AI 實作程式碼            → 根據 spec 生成
+7. 測試與調整               → 迭代改善規格和程式碼
 8. openspec archive        → 歸檔完成的 change
 ```
 
 ---
 
-## Part 4: 練習與總結
+## Part 4: 練習使用 SDD 做為開發流程
 
 現在輪到你了！請使用相同的流程，為剩餘 3 個 REST API 端點建立 MCP Tools。
 
@@ -601,18 +601,15 @@ User：Please archive the add-search-books-mcp-tool change
 1. 建立 proposal
    （請 AI 參考 OpenAPI 規範建立準確的 proposal）
    ↓
-2. 檢視 change
+2. 審查與確認
    ↓
-3. 撰寫詳細的 tool 規格
-   （請 AI 參考 OpenAPI 規範撰寫完整的 spec）
+3. 驗證格式
    ↓
-4. 驗證格式
+4. 請 AI 實作程式碼
    ↓
-5. 請 AI 實作程式碼
+5. 測試
    ↓
-6. 測試
-   ↓
-7. 歸檔 change
+6. 歸檔 change
 ```
 
 ---
@@ -625,7 +622,7 @@ User：Please archive the add-search-books-mcp-tool change
 
 ```
 請參考 bookstore-openapi.json 中的 GET /books/{id} 端點，
-創建一個 OpenSpec change proposal for adding get_book_detail MCP tool。
+創建一個 OpenSpec change proposal for adding get_book_detail MCP tool in sdd_mcp.py。
 確保參數和錯誤處理與 REST API 一致。
 ```
 
@@ -650,13 +647,6 @@ User：Please archive the add-search-books-mcp-tool change
 - [ ] 友善處理找不到書籍的情況
 - [ ] Docstring 說明「當使用者想了解特定書籍的詳細內容時使用」
 
-#### 💡 提示
-
-- 使用 `mock_db.get_book_by_id(book_id)` 取得書籍資料
-- 使用 `mock_db.get_author_by_id(author_id)` 取得作者資料
-- 使用 `mock_db.get_category_by_id(category_id)` 取得分類資料
-- 參考 `bookstore_mcp_manual.py` 中的 `get_book_detail` 實作
-
 ---
 
 ### 練習 2: update_stock Tool
@@ -667,7 +657,7 @@ User：Please archive the add-search-books-mcp-tool change
 
 ```
 請參考 bookstore-openapi.json 中的 PATCH /books/{id}/stock 端點，
-創建一個 OpenSpec change proposal for adding update_stock MCP tool。
+創建一個 OpenSpec change proposal for adding update_stock MCP tool in sdd_mcp.py。
 確保參數和錯誤處理與 REST API 一致。
 ```
 
@@ -693,13 +683,6 @@ User：Please archive the add-search-books-mcp-tool change
 - [ ] 顯示進貨或出貨的動作
 - [ ] Docstring 包含使用範例（如何進貨和出貨）
 
-#### 💡 提示
-
-- 使用 `mock_db.get_book_by_id(book_id)` 取得當前庫存
-- 使用 `mock_db.update_stock(book_id, quantity_change)` 更新庫存
-- `update_stock` 回傳 None 表示庫存不足
-- 使用 `abs()` 函數取得絕對值來顯示數量
-
 ---
 
 ### 練習 3: get_inventory_report Tool
@@ -710,7 +693,7 @@ User：Please archive the add-search-books-mcp-tool change
 
 ```
 請參考 bookstore-openapi.json 中的 GET /inventory/stats 端點，
-創建一個 OpenSpec change proposal for adding get_inventory_report MCP tool。
+創建一個 OpenSpec change proposal for adding get_inventory_report MCP tool in sdd_mcp.py。
 確保回應結構與 REST API 一致。
 ```
 
@@ -737,13 +720,6 @@ User：Please archive the add-search-books-mcp-tool change
 - [ ] 格式化數字（使用千分位逗號）
 - [ ] Docstring 說明「當使用者詢問庫存狀況或需要補貨的書籍時使用」
 
-#### 💡 提示
-
-- 使用 `mock_db.get_inventory_stats()` 取得統計資料
-- 使用 `f"${value:,.0f}"` 格式化金額（加入千分位逗號）
-- 低庫存書籍清單已經包含在 stats 中
-- stock == 0 用 🔴，stock < 10 但 > 0 用 🟡
-
 ---
 
 ### ❓ 常見問題 Q&A
@@ -763,7 +739,6 @@ A: 遵循「清晰但不過度」原則：
 - ✅ 描述所有重要的行為和邊界情況
 - ✅ 使用具體的範例
 - ❌ 不需要描述實作細節（如使用哪個函數）
-- ❌ 不需要描述資料庫 schema
 
 **Q3: 可以同時有多個 active changes 嗎？**
 
