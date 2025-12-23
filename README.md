@@ -37,8 +37,8 @@ code .
 
 開啟 VS Code 後，使用快捷鍵開啟內建 Terminal：
 
-- **Windows/Linux**: ` Ctrl + ``  ` `` (Ctrl + 反引號)
-- **macOS**: ` Cmd + ``  ` ``
+- **Windows/Linux**: `` Ctrl + ` `` (Ctrl + 反引號)
+- **macOS**: `` Cmd + ` ``
 
 或從選單：`Terminal` → `New Terminal`
 
