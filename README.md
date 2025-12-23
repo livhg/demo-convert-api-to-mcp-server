@@ -22,12 +22,25 @@
 
 ```bash
 git clone git@github.com:livhg/demo-convert-api-to-mcp-server.git
-cd demo-convert-api-to-mcp-server
 ```
 
 方法二：直接下載 ZIP 檔
 
-前往 [https://github.com/livhg/demo-convert-api-to-mcp-server/archive/refs/heads/main.zip](https://github.com/livhg/demo-convert-api-to-mcp-server/archive/refs/heads/main.zip) 下載並解壓縮
+透過 [https://github.com/livhg/demo-convert-api-to-mcp-server/archive/refs/heads/main.zip](https://github.com/livhg/demo-convert-api-to-mcp-server/archive/refs/heads/main.zip) 下載並解壓縮
+
+#### 使用 VS Code 開啟專案
+
+```bash
+cd demo-convert-api-to-mcp-server
+code .
+```
+
+開啟 VS Code 後，使用快捷鍵開啟內建 Terminal：
+
+- **Windows/Linux**: ` Ctrl + ``  ` `` (Ctrl + 反引號)
+- **macOS**: ` Cmd + ``  ` ``
+
+或從選單：`Terminal` → `New Terminal`
 
 #### 建立虛擬環境
 
@@ -35,7 +48,7 @@ cd demo-convert-api-to-mcp-server
 
 ```bash
 # 建立並啟動 Python 3.14 虛擬環境
-uv venv --python 3.14
+uv venv .venv --python 3.14
 
 # 啟動虛擬環境
 # Windows
